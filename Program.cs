@@ -1,23 +1,31 @@
-﻿using Avalonia;
-using Avalonia.ReactiveUI;
-using System;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Reflection;
+using Avalonia;
 
 namespace PreloaderConfigurator;
 
-sealed class Program
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+class Program
 {
-    // Initialization code. Don't use any Avalonia, third-party APIs or any
-    // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-    // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static void Main(string[] args)
+    {
+        AppContext.SetData("APP_CONTEXT_BASE_DIRECTORY", AppDomain.CurrentDomain.BaseDirectory);
+        AppDomain.CurrentDomain.AssemblyResolve += (_, resolveEventArgs) =>
+        {
+            var assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "libs",
+                new AssemblyName(resolveEventArgs.Name).Name + ".dll");
+            return File.Exists(assemblyPath) ? Assembly.LoadFrom(assemblyPath) : null;
+        };
+            
+        BuildAvaloniaApp()
+            .StartWithClassicDesktopLifetime(args);
+    }
 
-    // Avalonia configuration, don't remove; also used by visual designer.
-    public static AppBuilder BuildAvaloniaApp()
+    private static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .WithInterFont()
-            .LogToTrace()
-            .UseReactiveUI();
+            .LogToTrace();
 }

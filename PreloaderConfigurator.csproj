@@ -6,11 +6,10 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <AssemblyName>XSE Preloader Config</AssemblyName>
+        <AssemblyName>xSE Preloader Config</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Models\"/>
         <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
 
@@ -26,4 +25,17 @@
         </PackageReference>
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.3"/>
     </ItemGroup>
+
+    <Target Name="PostPublish" AfterTargets="Publish">
+    <!-- Define the folder where the DLLs will be moved -->
+    <ItemGroup>
+        <DllFiles Include="$(PublishDir)**\*.dll" Exclude="$(PublishDir)\$(AssemblyName).dll" />
+    </ItemGroup>
+
+    <!-- Create a target folder -->
+    <MakeDir Directories="$(PublishDir)/libs" />
+
+    <!-- Move DLLs to the 'libs' folder -->
+    <Move SourceFiles="@(DllFiles)" DestinationFolder="$(PublishDir)/libs" />
+    </Target>
 </Project>

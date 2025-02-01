@@ -1,20 +1,170 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:PreloaderConfigurator.ViewModels"
+        xmlns:m="using:PreloaderConfigurator.Models"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="800"
         x:Class="PreloaderConfigurator.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="PreloaderConfigurator">
+        Title="Preloader Configurator"
+        Width="450" SizeToContent="Height"
+        Background="#1E1E1E">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Window.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="#E8E8E8"/>
+        </Style>
 
+        <Style Selector="TextBlock.label">
+            <Setter Property="Foreground" Value="#CCCCCC"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,5"/>
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="Foreground" Value="#E8E8E8"/>
+            <Setter Property="BorderBrush" Value="#3F3F3F"/>
+            <Setter Property="Margin" Value="0,5"/>
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="Foreground" Value="#E8E8E8"/>
+            <Setter Property="BorderBrush" Value="#3F3F3F"/>
+            <Setter Property="Margin" Value="0,5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#0E639C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="0,5"/>
+        </Style>
+
+        <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="#1177BB"/>
+        </Style>
+
+        <Style Selector="Button:pressed">
+            <Setter Property="Background" Value="#0D5789"/>
+        </Style>
+
+        <Style Selector="CheckBox">
+            <Setter Property="Foreground" Value="#E8E8E8"/>
+            <Setter Property="Margin" Value="0,10"/>
+        </Style>
+
+        <Style Selector="ToolTip">
+            <Setter Property="Background" Value="#424242"/>
+            <Setter Property="Foreground" Value="#E8E8E8"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="MaxWidth" Value="400"/>
+            <Setter Property="Padding" Value="10"/>
+        </Style>
+    </Window.Styles>
+
+    <StackPanel Margin="10">
+        <!-- Basic Options -->
+        <ComboBox ItemsSource="{Binding LoadMethods}"
+                  SelectedItem="{Binding Config.LoadMethod, Mode=TwoWay}"
+                  ToolTip.Tip="{x:Static m:PreloaderDocs.LoadMethodComment}"
+                  IsEnabled="{Binding Config.IsLoaded}"/>
+
+        <!-- Advanced Options Toggle -->
+        <CheckBox IsChecked="{Binding ShowAdvancedOptions}"
+                  Content="Show Advanced Options"/>
+
+        <!-- Advanced Options -->
+        <StackPanel IsVisible="{Binding ShowAdvancedOptions}">
+            <!-- Original Library -->
+            <TextBlock Text="Original Library:" Classes="label"
+                      ToolTip.Tip="{x:Static m:PreloaderDocs.OriginalLibraryComment}"/>
+            <TextBox Text="{Binding Config.OriginalLibrary, Mode=TwoWay}"/>
+
+            <!-- Import Library -->
+            <TextBlock Text="ImportAddressHook Library Name:" Classes="label"
+                      ToolTip.Tip="{x:Static m:PreloaderDocs.ImportAddressHookComment}"/>
+            <TextBox Text="{Binding Config.ImportLibrary, Mode=TwoWay}"/>
+
+            <!-- Import Function -->
+            <TextBlock Text="ImportAddressHook Function Name:" Classes="label"
+                      ToolTip.Tip="{x:Static m:PreloaderDocs.ImportAddressHookComment}"/>
+            <TextBox Text="{Binding Config.ImportFunction, Mode=TwoWay}"/>
+
+            <!-- Thread Number -->
+            <TextBlock Text="OnThreadAttach Thread Number:" Classes="label"
+                      ToolTip.Tip="{x:Static m:PreloaderDocs.ThreadNumberComment}"/>
+            <TextBox Text="{Binding Config.ThreadNumber, Mode=TwoWay}"/>
+
+            <!-- Install Exception Handler -->
+            <TextBlock Text="Install Exception Handler:" Classes="label"
+                      ToolTip.Tip="{x:Static m:PreloaderDocs.InstallExceptionHandlerComment}"/>
+            <ComboBox SelectedItem="{Binding Config.InstallExceptionHandler, Mode=TwoWay}">
+                <ComboBoxItem>true</ComboBoxItem>
+                <ComboBoxItem>false</ComboBoxItem>
+            </ComboBox>
+
+            <!-- Keep Exception Handler -->
+            <TextBlock Text="Keep Exception Handler:" Classes="label"
+                      ToolTip.Tip="{x:Static m:PreloaderDocs.KeepExceptionHandlerComment}"/>
+            <ComboBox SelectedItem="{Binding Config.KeepExceptionHandler, Mode=TwoWay}">
+                <ComboBoxItem>true</ComboBoxItem>
+                <ComboBoxItem>false</ComboBoxItem>
+            </ComboBox>
+
+            <!-- Load Delay -->
+            <TextBlock Text="Load Delay (ms):" Classes="label"
+                      ToolTip.Tip="{x:Static m:PreloaderDocs.LoadDelayComment}"/>
+            <TextBox Text="{Binding Config.LoadDelay, Mode=TwoWay}"/>
+
+            <!-- Hook Delay -->
+            <TextBlock Text="Hook Delay (ms):" Classes="label"
+                      ToolTip.Tip="{x:Static m:PreloaderDocs.HookDelayComment}"/>
+            <TextBox Text="{Binding Config.HookDelay, Mode=TwoWay}"/>
+
+            <!-- Processes Section -->
+            <TextBlock Text="Processes:" Classes="label"
+                      ToolTip.Tip="{x:Static m:PreloaderDocs.ProcessesComment}"/>
+            <ItemsControl ItemsSource="{Binding Config.Processes}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="m:ProcessItem">
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,5">
+                            <TextBlock Text="{Binding Name}" Grid.Column="0" VerticalAlignment="Center"/>
+                            <ComboBox Grid.Column="1" SelectedItem="{Binding IsAllowed, Mode=TwoWay}"
+                                    ToolTip.Tip="{x:Static m:PreloaderDocs.AllowComment}">
+                                <ComboBoxItem>true</ComboBoxItem>
+                                <ComboBoxItem>false</ComboBoxItem>
+                            </ComboBox>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+        <!-- Buttons -->
+        <Button Command="{Binding OpenCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                Content="Open Configuration File"
+                Margin="0,10,0,5"/>
+
+        <Grid ColumnDefinitions="*,*" Margin="0,5">
+            <Button Command="{Binding SaveCommand}"
+                    Content="Save Changes"
+                    Grid.Column="0"
+                    Margin="0,0,5,0"/>
+            <Button Command="{Binding SaveAsCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                    Content="Save As"
+                    Grid.Column="1"
+                    Margin="5,0,0,0"/>
+        </Grid>
+    </StackPanel>
 </Window>
